@@ -932,7 +932,7 @@
         </div>
         <div class="form-group">
           <label for="studentId">Matrícula</label>
-          <input type="text" id="studentId" placeholder="Ex: 2023019842" />
+          <input type="text" id="studentId" placeholder="Ex: 01586864" />
         </div>
         <div class="form-group">
           <label for="studentCourse">Curso de Graduação</label>
@@ -1155,33 +1155,27 @@
 
   <script>
     // ==========================================
-    // ⚙️ CONFIGURAÇÃO DO FIREBASE (COLE SUAS CHAVES AQUI)
+    // ⚙️ CONFIGURAÇÃO DO FIREBASE COM AS SUAS CHAVES
     // ==========================================
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY_AQUI",
-      authDomain: "SEU_AUTH_DOMAIN_AQUI",
-      projectId: "SEU_PROJECT_ID_AQUI",
-      storageBucket: "SEU_STORAGE_BUCKET_AQUI",
-      messagingSenderId: "SEU_MESSAGING_SENDER_ID_AQUI",
-      appId: "SEU_APP_ID_AQUI"
+      apiKey: "AIzaSyABwG3NJuM-Vs0bh5N9LIt5ZmGYV483Z50",
+      authDomain: "auditoria-academica.firebaseapp.com",
+      projectId: "auditoria-academica",
+      storageBucket: "auditoria-academica.firebasestorage.app",
+      messagingSenderId: "198461498514",
+      appId: "1:198461498514:web:be180ae76ec3312618724b"
     };
 
     let cloudDb = null;
     let isCloudConfigured = false;
     const syncStatusBadge = document.getElementById("syncStatusBadge");
 
-    // Inicialização do Firebase
     try {
-      if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "SUA_API_KEY_AQUI") {
-        firebase.initializeApp(firebaseConfig);
-        cloudDb = firebase.firestore();
-        isCloudConfigured = true;
-        syncStatusBadge.className = "sync-status sync-online";
-        syncStatusBadge.innerHTML = "☁️ Nuvem Ativa (Sincronizado)";
-      } else {
-        syncStatusBadge.className = "sync-status sync-offline";
-        syncStatusBadge.innerHTML = "💾 Modo Local (Configure o Firebase para Nuvem)";
-      }
+      firebase.initializeApp(firebaseConfig);
+      cloudDb = firebase.firestore();
+      isCloudConfigured = true;
+      syncStatusBadge.className = "sync-status sync-online";
+      syncStatusBadge.innerHTML = "☁️ Nuvem Ativa (Sincronizado)";
     } catch (err) {
       console.warn("Erro ao iniciar Firebase:", err);
       syncStatusBadge.className = "sync-status sync-offline";
@@ -1230,7 +1224,6 @@
     }
 
     async function dbSaveRecords() {
-      // 1. Salva localmente
       await new Promise((resolve, reject) => {
         const tx = localDb.transaction(STORE_RECORDS, "readwrite");
         const store = tx.objectStore(STORE_RECORDS);
@@ -1240,7 +1233,6 @@
         tx.onerror = (e) => reject(e.target.error);
       });
 
-      // 2. Sincroniza com a nuvem (Firestore)
       if (isCloudConfigured && cloudDb) {
         try {
           const batch = cloudDb.batch();
@@ -2234,14 +2226,13 @@ Curso de ${studentCourse}`;
             studentProfile = profileDoc.data();
           }
 
-          // Escuta alterações em tempo real (qualquer celular ou computador atualiza a tela na hora)
+          // Escuta alterações em tempo real
           cloudDb.collection("academic_records").onSnapshot((snapshot) => {
             if (!snapshot.empty) {
               const cloudRecords = [];
               snapshot.forEach(doc => cloudRecords.push(doc.data()));
               records = cloudRecords;
               
-              // Atualiza cópia local
               const tx = localDb.transaction(STORE_RECORDS, "readwrite");
               const store = tx.objectStore(STORE_RECORDS);
               store.clear();
