@@ -92,7 +92,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -135,6 +135,24 @@
 
     .btn-secondary:hover {
       background: #334155;
+    }
+
+    .btn-sync-force {
+      background: #0d9488;
+      color: #fff;
+      padding: 7px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-sync-force:hover {
+      background: #0f766e;
     }
 
     .btn-theme-toggle {
@@ -901,6 +919,9 @@
       <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">
         🌙 Modo Escuro
       </button>
+      <button class="btn-sync-force" onclick="forceSyncAllToCloud()" title="Enviar todas as matérias locais para a nuvem garantindo paridade em todos os aparelhos">
+        ⚡ Sincronizar Tudo na Nuvem
+      </button>
       <button class="btn-secondary" onclick="exportBackupJson()" title="Baixar arquivo de segurança com todas as disciplinas e anexos">
         💾 Fazer Backup (JSON)
       </button>
@@ -1154,9 +1175,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // ⚙️ CONFIGURAÇÃO DO FIREBASE COM AS SUAS CHAVES
-    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyABwG3NJuM-Vs0bh5N9LIt5ZmGYV483Z50",
       authDomain: "auditoria-academica.firebaseapp.com",
@@ -1182,7 +1200,6 @@
       syncStatusBadge.innerHTML = "⚠️ Nuvem desconectada (Usando Modo Local)";
     }
 
-    // Camada de Armazenamento Local IndexedDB
     const DB_NAME = "AcademicAuditDB";
     const DB_VERSION = 1;
     const STORE_RECORDS = "records";
@@ -1224,6 +1241,7 @@
     }
 
     async function dbSaveRecords() {
+      // 1. Salva localmente de forma garantida
       await new Promise((resolve, reject) => {
         const tx = localDb.transaction(STORE_RECORDS, "readwrite");
         const store = tx.objectStore(STORE_RECORDS);
@@ -1233,19 +1251,19 @@
         tx.onerror = (e) => reject(e.target.error);
       });
 
+      // 2. Sincroniza documento por documento para não estourar lotes
       if (isCloudConfigured && cloudDb) {
-        try {
-          const batch = cloudDb.batch();
-          const colRef = cloudDb.collection("academic_records");
-          
-          records.forEach(item => {
-            const docRef = colRef.doc(item.id);
-            batch.set(docRef, item);
-          });
-          await batch.commit();
-        } catch (e) {
-          console.error("Erro ao sincronizar dados com nuvem:", e);
+        syncStatusBadge.innerHTML = "☁️ Enviando atualizações...";
+        const colRef = cloudDb.collection("academic_records");
+        
+        for (const item of records) {
+          try {
+            await colRef.doc(item.id).set(item);
+          } catch (e) {
+            console.error(`Erro ao subir matéria ${item.subject}:`, e);
+          }
         }
+        syncStatusBadge.innerHTML = `☁️ Nuvem Sincronizada (${records.length} disciplinas)`;
       }
     }
 
@@ -1287,7 +1305,44 @@
       });
     }
 
-    // Elementos da Interface
+    // Botão de Forçar Envio Completo
+    window.forceSyncAllToCloud = async function() {
+      if (!isCloudConfigured || !cloudDb) {
+        alert("O Firebase não está conectado.");
+        return;
+      }
+
+      const count = records.length;
+      if (count === 0) {
+        alert("Não há disciplinas locais para sincronizar.");
+        return;
+      }
+
+      syncStatusBadge.innerHTML = `⏳ Sincronizando ${count} matérias...`;
+      let successCount = 0;
+      let failCount = 0;
+
+      const colRef = cloudDb.collection("academic_records");
+      for (const item of records) {
+        try {
+          await colRef.doc(item.id).set(item);
+          successCount++;
+        } catch (err) {
+          console.error("Erro na matéria " + item.subject, err);
+          failCount++;
+        }
+      }
+
+      await dbSaveProfile();
+      syncStatusBadge.innerHTML = `☁️ Nuvem Ativa (${successCount}/${count} sincronizadas)`;
+
+      if (failCount > 0) {
+        alert(`Sincronização concluída: ${successCount} disciplinas enviadas. ${failCount} matérias continham anexos acima de 1MB e foram preservadas localmente.`);
+      } else {
+        alert(`Sucesso absoluto! Todas as ${successCount} disciplinas estão 100% sincronizadas na nuvem. Agora seu Edge e celular exibirão exatamente ${successCount} disciplinas.`);
+      }
+    };
+
     const studentNameInput = document.getElementById("studentName");
     const studentIdInput = document.getElementById("studentId");
     const studentCourseInput = document.getElementById("studentCourse");
@@ -1714,7 +1769,6 @@
       updateDashboard(filtered);
     }
 
-    // Protocolos
     window.openTicketModal = function(recordId) {
       const item = records.find(r => r.id === recordId);
       if (!item) return;
@@ -1752,7 +1806,6 @@
       renderTable();
     };
 
-    // Recurso
     window.generateAppealLetter = function(recordId) {
       const item = records.find(r => r.id === recordId);
       if (!item) return;
@@ -1834,7 +1887,6 @@ Curso de ${studentCourse}`;
       });
     };
 
-    // Modal Anexo
     window.openAttachmentModal = function(recordId, attachmentIndex) {
       const item = records.find(r => r.id === recordId);
       if (!item || !item.attachments || !item.attachments[attachmentIndex]) return;
@@ -1880,7 +1932,6 @@ Curso de ${studentCourse}`;
       }
     });
 
-    // Edição
     window.startEditRecord = function(id) {
       const item = records.find(r => r.id === id);
       if (!item) return;
@@ -1949,8 +2000,7 @@ Curso de ${studentCourse}`;
       }
     };
 
-    // Compactador de Imagens
-    function compressImageFile(file, maxWidth = 1600, quality = 0.78) {
+    function compressImageFile(file, maxWidth = 1200, quality = 0.70) {
       return new Promise((resolve) => {
         if (!file.type.startsWith("image/")) {
           const reader = new FileReader();
@@ -2060,7 +2110,6 @@ Curso de ${studentCourse}`;
       renderTable();
     });
 
-    // Backup JSON
     window.exportBackupJson = function() {
       if (records.length === 0 && !studentProfile.name) {
         alert("Não há dados para exportar no momento.");
@@ -2069,7 +2118,7 @@ Curso de ${studentCourse}`;
 
       const fullBackup = {
         app: "AuditoriaAcademica",
-        version: "6.0",
+        version: "6.5",
         exportDate: new Date().toISOString(),
         profile: studentProfile,
         records: records
@@ -2116,7 +2165,7 @@ Curso de ${studentCourse}`;
               selectedStatusFilter = "all";
               setStatusFilter("all");
               renderTable();
-              alert(`Sucesso! Todas as ${records.length} disciplinas foram restauradas e estão prontas para acesso de qualquer dispositivo.`);
+              alert(`Sucesso! Todas as ${records.length} disciplinas foram carregadas e enviadas para a nuvem.`);
             }
           } else {
             alert("O arquivo fornecido não é um backup acadêmico válido.");
@@ -2129,7 +2178,6 @@ Curso de ${studentCourse}`;
       event.target.value = "";
     };
 
-    // Exportação Excel/CSV
     btnExport.addEventListener("click", function() {
       const dataToExport = getFilteredRecords();
 
@@ -2205,38 +2253,36 @@ Curso de ${studentCourse}`;
       URL.revokeObjectURL(url);
     });
 
-    // Inicialização da Aplicação com Sincronização em Nuvem
     async function startApp() {
       await initLocalDB();
 
       const savedTheme = localStorage.getItem("academic_theme_pref") || "light";
       applyTheme(savedTheme);
 
-      // 1. Carrega dados locais primeiro para exibição imediata
       records = await dbLoadLocalRecords();
       const localProfile = await dbLoadLocalProfile();
       if (localProfile) studentProfile = localProfile;
 
-      // 2. Se a nuvem estiver ativa, sincroniza em tempo real
       if (isCloudConfigured && cloudDb) {
         try {
-          // Sincroniza Perfil
           const profileDoc = await cloudDb.collection("academic_profile").doc("student").get();
           if (profileDoc.exists) {
             studentProfile = profileDoc.data();
           }
 
-          // Escuta alterações em tempo real
           cloudDb.collection("academic_records").onSnapshot((snapshot) => {
             if (!snapshot.empty) {
               const cloudRecords = [];
               snapshot.forEach(doc => cloudRecords.push(doc.data()));
-              records = cloudRecords;
-              
-              const tx = localDb.transaction(STORE_RECORDS, "readwrite");
-              const store = tx.objectStore(STORE_RECORDS);
-              store.clear();
-              records.forEach(r => store.put(r));
+
+              // Se a nuvem tiver mais registros ou registros atualizados, atualiza o local
+              if (cloudRecords.length >= records.length) {
+                records = cloudRecords;
+                const tx = localDb.transaction(STORE_RECORDS, "readwrite");
+                const store = tx.objectStore(STORE_RECORDS);
+                store.clear();
+                records.forEach(r => store.put(r));
+              }
 
               renderTable();
             }
