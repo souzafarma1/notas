@@ -6,7 +6,6 @@
   <title>Auditoria Acadêmica - Sincronizado em Nuvem</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <!-- Firebase SDKs compatíveis com script único -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -215,6 +214,67 @@
       gap: 16px;
     }
 
+    /* Bloco de Horas Complementares */
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background: var(--table-header);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #059669;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* Navegação Principal por Abas */
+    .main-nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .nav-tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .tab-content-view {
+      display: none;
+    }
+
+    .tab-content-view.active {
+      display: block;
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -400,10 +460,6 @@
       cursor: pointer;
     }
 
-    .status-pill:hover {
-      filter: brightness(0.95);
-    }
-
     .status-pill.active {
       background: #334155;
       color: #fff;
@@ -432,10 +488,6 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-    }
-
-    .tab-btn:hover {
-      filter: brightness(0.95);
     }
 
     .tab-btn.active {
@@ -598,18 +650,6 @@
       border-color: #059669;
     }
 
-    .ticket-rejected {
-      background-color: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-
-    body.dark-mode .ticket-rejected {
-      background-color: #7f1d1d;
-      color: #fca5a5;
-      border-color: #dc2626;
-    }
-
     .attachments-list {
       display: flex;
       flex-direction: column;
@@ -628,7 +668,6 @@
       gap: 4px;
       padding: 2px 4px;
       border-radius: 4px;
-      text-align: left;
     }
 
     .btn-view-attachment:hover {
@@ -676,6 +715,21 @@
       color: #7dd3fc;
       background-color: #082f49;
       border-color: #0369a1;
+    }
+
+    .btn-complete-pending {
+      background-color: #059669;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-complete-pending:hover {
+      background-color: #047857;
     }
 
     .btn-action:hover {
@@ -760,31 +814,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      max-width: 75%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .modal-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-modal-download {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
     }
 
     .btn-modal-close {
@@ -796,11 +825,6 @@
       cursor: pointer;
       padding: 4px 8px;
       border-radius: 4px;
-    }
-
-    .btn-modal-close:hover {
-      background: var(--border);
-      color: var(--text);
     }
 
     .modal-body {
@@ -825,7 +849,6 @@
       max-height: 100%;
       object-fit: contain;
       padding: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
 
     .appeal-body {
@@ -874,10 +897,6 @@
       gap: 6px;
     }
 
-    .btn-copy:hover {
-      background: #047857;
-    }
-
     @media print {
       body {
         background: #ffffff !important;
@@ -885,7 +904,7 @@
         padding: 0;
       }
 
-      .top-actions, #gradeFormCard, .filter-section, .chart-wrapper, .btn-action, .btn-export, input[type="file"], .btn-submit, .btn-cancel, .modal-overlay, .sync-status {
+      .top-actions, #gradeFormCard, .filter-section, .chart-wrapper, .btn-action, .btn-export, input[type="file"], .btn-submit, .btn-cancel, .modal-overlay, .sync-status, .main-nav-tabs, #pendingFormCard, .hours-card {
         display: none !important;
       }
 
@@ -937,7 +956,7 @@
 
     <header>
       <h1>Auditoria e Contestação Acadêmica</h1>
-      <p>Conferência exata de médias, auditoria de divergências no portal e gestão de comprovantes</p>
+      <p>Conferência exata de médias, controle de pendências e horas complementares</p>
       <div id="syncStatusBadge" class="sync-status sync-offline">
         ☁️ Conectando à nuvem...
       </div>
@@ -966,132 +985,210 @@
       </div>
     </div>
 
-    <!-- Formulário de Cadastro e Edição -->
-    <div class="card" id="gradeFormCard">
-      <h2 id="formTitle">📘 Cadastrar Disciplina e Avaliações</h2>
-      <form id="gradeForm" class="form-grid">
-        <input type="hidden" id="editRecordId" value="" />
-
+    <!-- Painel Fixo de Atividades Complementares (Horas Extracurriculares) -->
+    <div class="card hours-card">
+      <h2>⏳ Atividades Complementares (Horas Extracurriculares)</h2>
+      <div class="hours-grid">
         <div class="form-group">
-          <label for="semester">Período Letivo</label>
-          <input type="text" id="semester" placeholder="Ex: 2023.1" required />
+          <label for="hoursRequired">Horas Exigidas pelo Curso</label>
+          <input type="number" id="hoursRequired" min="0" step="1" placeholder="Ex: 200" oninput="calculateHoursBalance()" />
         </div>
-
-        <div class="form-group" style="grid-column: span 2;">
-          <label for="subject">Nome da Disciplina</label>
-          <input type="text" id="subject" placeholder="Ex: Farmacologia Básica" required />
-        </div>
-
         <div class="form-group">
-          <label for="gradeAv1">Nota AV1 (0 a 10)</label>
-          <input type="number" id="gradeAv1" min="0" max="10" step="0.01" placeholder="0.00" required />
+          <label for="hoursSubmitted">Horas Validadas / Enviadas</label>
+          <input type="number" id="hoursSubmitted" min="0" step="1" placeholder="Ex: 120" oninput="calculateHoursBalance()" />
         </div>
-
-        <div class="form-group">
-          <label for="gradeAv2">Nota AV2 (0 a 10)</label>
-          <input type="number" id="gradeAv2" min="0" max="10" step="0.01" placeholder="0.00" required />
+        <div class="stat-card" style="padding: 10px;">
+          <span>Saldo de Horas</span>
+          <strong id="hoursBalanceText" style="font-size: 1.25rem;">0h</strong>
         </div>
-
-        <div class="form-group">
-          <label for="gradeAv3">Final / AV3 (Opcional)</label>
-          <input type="number" id="gradeAv3" min="0" max="10" step="0.01" placeholder="Se fez final" />
-        </div>
-
-        <div class="form-group">
-          <label for="portalGrade">Média no Portal da Faculdade</label>
-          <input type="number" id="portalGrade" min="0" max="10" step="0.01" placeholder="Para auditoria" />
-        </div>
-
-        <div class="form-group" style="grid-column: span 2;">
-          <label for="fileInputs">Comprovantes / Boletins (PDF ou Fotos - Compactação Automática)</label>
-          <input type="file" id="fileInputs" accept="application/pdf,image/*" multiple />
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" id="btnSubmitForm" class="btn-submit">Salvar Disciplina</button>
-          <button type="button" id="btnCancelEdit" class="btn-cancel" onclick="cancelEdit()">Cancelar Edição</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Painel Visual de Desempenho -->
-    <div class="card">
-      <h2>📊 Painel de Aproveitamento e Desempenho</h2>
-      <div class="stats-container">
-        <div class="stat-card">
-          <span>Total de Matérias</span>
-          <strong id="statTotal">0</strong>
-        </div>
-        <div class="stat-card">
-          <span>Média Acumulada no Período</span>
-          <strong id="statGpa">0.00</strong>
-        </div>
-        <div class="stat-card">
-          <span>Taxa de Aprovação</span>
-          <strong id="statPassRate">0%</strong>
+        <div class="stat-card" style="padding: 10px;">
+          <span>Status das Horas</span>
+          <strong id="hoursStatusBadge" style="font-size: 1.05rem; color: var(--warning);">Pendente</strong>
         </div>
       </div>
-      <div class="chart-wrapper">
-        <canvas id="performanceChart"></canvas>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="hoursProgressBar"></div>
       </div>
     </div>
 
-    <!-- Tabela Histórica -->
-    <div class="card">
-      <div class="filter-section">
-        <div class="filter-header">
-          <h2>📋 Histórico e Auditoria de Notas</h2>
-          <button id="btnExport" class="btn-export" title="Exportar tabela completa com identificação do aluno">
-            📊 Exportar para Excel (.CSV)
-          </button>
-        </div>
+    <!-- Navegação por Abas Principais -->
+    <div class="main-nav-tabs">
+      <button class="nav-tab-btn active" id="tabBtnHistory" onclick="switchMainTab('history')">
+        📚 Disciplinas Cursadas (<span id="countCursadas">0</span>)
+      </button>
+      <button class="nav-tab-btn" id="tabBtnPending" onclick="switchMainTab('pending')">
+        📋 A Cursar / Faltando (<span id="countPendentes">0</span>)
+      </button>
+    </div>
 
-        <!-- Linha de Busca e Filtro de Status -->
-        <div class="filter-controls-row">
-          <div class="search-box-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Buscar disciplina por nome em tempo real..." oninput="handleSearchChange()" />
+    <!-- ================= ABA 1: HISTÓRICO E AUDITORIA ================= -->
+    <div id="viewHistory" class="tab-content-view active">
+      <!-- Formulário de Cadastro e Edição -->
+      <div class="card" id="gradeFormCard">
+        <h2 id="formTitle">📘 Cadastrar Disciplina e Avaliações</h2>
+        <form id="gradeForm" class="form-grid">
+          <input type="hidden" id="editRecordId" value="" />
+
+          <div class="form-group">
+            <label for="semester">Período Letivo</label>
+            <input type="text" id="semester" placeholder="Ex: 2023.1" required />
           </div>
 
-          <div class="status-filters">
-            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-right: 4px;">Status:</span>
-            <button type="button" class="status-pill active" id="filterStatusAll" onclick="setStatusFilter('all')">Todas</button>
-            <button type="button" class="status-pill" id="filterStatusDiv" onclick="setStatusFilter('divergence')">⚠️ Apenas Divergências</button>
-            <button type="button" class="status-pill" id="filterStatusTicket" onclick="setStatusFilter('tickets')">📌 Com Protocolo</button>
-            <button type="button" class="status-pill" id="filterStatusRec" onclick="setStatusFilter('recovery')">🔄 Em Recuperação</button>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="subject">Nome da Disciplina</label>
+            <input type="text" id="subject" placeholder="Ex: Farmacologia Básica" required />
+          </div>
+
+          <div class="form-group">
+            <label for="gradeAv1">Nota AV1 (0 a 10)</label>
+            <input type="number" id="gradeAv1" min="0" max="10" step="0.01" placeholder="0.00" required />
+          </div>
+
+          <div class="form-group">
+            <label for="gradeAv2">Nota AV2 (0 a 10)</label>
+            <input type="number" id="gradeAv2" min="0" max="10" step="0.01" placeholder="0.00" required />
+          </div>
+
+          <div class="form-group">
+            <label for="gradeAv3">Final / AV3 (Opcional)</label>
+            <input type="number" id="gradeAv3" min="0" max="10" step="0.01" placeholder="Se fez final" />
+          </div>
+
+          <div class="form-group">
+            <label for="portalGrade">Média no Portal da Faculdade</label>
+            <input type="number" id="portalGrade" min="0" max="10" step="0.01" placeholder="Para auditoria" />
+          </div>
+
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="fileInputs">Comprovantes / Boletins (PDF ou Fotos)</label>
+            <input type="file" id="fileInputs" accept="application/pdf,image/*" multiple />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="btnSubmitForm" class="btn-submit">Salvar Disciplina</button>
+            <button type="button" id="btnCancelEdit" class="btn-cancel" onclick="cancelEdit()">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Painel Visual de Desempenho -->
+      <div class="card">
+        <h2>📊 Painel de Aproveitamento e Desempenho</h2>
+        <div class="stats-container">
+          <div class="stat-card">
+            <span>Total de Matérias Cursadas</span>
+            <strong id="statTotal">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Média Acumulada no Período</span>
+            <strong id="statGpa">0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span>Taxa de Aprovação</span>
+            <strong id="statPassRate">0%</strong>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Tabela Histórica -->
+      <div class="card">
+        <div class="filter-section">
+          <div class="filter-header">
+            <h2>📋 Histórico e Auditoria de Notas</h2>
+            <button id="btnExport" class="btn-export" title="Exportar tabela completa com identificação do aluno">
+              📊 Exportar para Excel (.CSV)
+            </button>
+          </div>
+
+          <div class="filter-controls-row">
+            <div class="search-box-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" placeholder="Buscar disciplina por nome em tempo real..." oninput="handleSearchChange()" />
+            </div>
+
+            <div class="status-filters">
+              <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-right: 4px;">Status:</span>
+              <button type="button" class="status-pill active" id="filterStatusAll" onclick="setStatusFilter('all')">Todas</button>
+              <button type="button" class="status-pill" id="filterStatusDiv" onclick="setStatusFilter('divergence')">⚠️ Apenas Divergências</button>
+              <button type="button" class="status-pill" id="filterStatusTicket" onclick="setStatusFilter('tickets')">📌 Com Protocolo</button>
+              <button type="button" class="status-pill" id="filterStatusRec" onclick="setStatusFilter('recovery')">🔄 Em Recuperação</button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Filtrar por Período:</label>
+            <div class="semester-tabs" id="semesterTabsContainer"></div>
           </div>
         </div>
 
-        <!-- Abas por Período -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Filtrar por Período:</label>
-          <div class="semester-tabs" id="semesterTabsContainer"></div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Período</th>
+                <th>Disciplina</th>
+                <th>AV1</th>
+                <th>AV2</th>
+                <th>Média Real</th>
+                <th>Final (AV3)</th>
+                <th>Média Definitiva</th>
+                <th>No Portal</th>
+                <th>Auditoria / Protocolo</th>
+                <th>Situação</th>
+                <th>Anexos</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="gradesTableBody"></tbody>
+          </table>
         </div>
+        <div id="emptyMessage" class="empty-state">Nenhuma disciplina encontrada com os filtros atuais.</div>
+      </div>
+    </div>
+
+    <!-- ================= ABA 2: DISCIPLINAS A CURSAR (PENDENTES) ================= -->
+    <div id="viewPending" class="tab-content-view">
+      <div class="card" id="pendingFormCard">
+        <h2>📌 Adicionar Disciplina Faltante / A Cursar</h2>
+        <form id="pendingForm" class="form-grid">
+          <div class="form-group">
+            <label for="pendingSemester">Período Previsto (Opcional)</label>
+            <input type="text" id="pendingSemester" placeholder="Ex: 2025.1 ou 8º Período" />
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="pendingSubject">Nome da Disciplina Faltante</label>
+            <input type="text" id="pendingSubject" placeholder="Ex: Tecnologia Farmacêutica II" required />
+          </div>
+          <div class="form-group">
+            <label for="pendingHours">Carga Horária (Horas)</label>
+            <input type="number" id="pendingHours" placeholder="Ex: 60" />
+          </div>
+          <button type="submit" class="btn-submit" style="height: 40px;">Adicionar à Lista de Pendências</button>
+        </form>
       </div>
 
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Período</th>
-              <th>Disciplina</th>
-              <th>AV1</th>
-              <th>AV2</th>
-              <th>Média Real</th>
-              <th>Final (AV3)</th>
-              <th>Média Definitiva</th>
-              <th>No Portal</th>
-              <th>Auditoria / Protocolo</th>
-              <th>Situação</th>
-              <th>Anexos</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="gradesTableBody"></tbody>
-        </table>
+      <div class="card">
+        <h2>📋 Grade de Disciplinas Restantes para Formatura</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Período Previsto</th>
+                <th>Disciplina</th>
+                <th>Carga Horária</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="pendingTableBody"></tbody>
+          </table>
+        </div>
+        <div id="emptyPendingMessage" class="empty-state">Parabéns! Nenhuma disciplina pendente cadastrada.</div>
       </div>
-      <div id="emptyMessage" class="empty-state">Nenhuma disciplina encontrada com os filtros atuais.</div>
     </div>
+
   </div>
 
   <!-- Modal de Visualização de Anexos -->
@@ -1099,12 +1196,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modalFileTitle">📄 Visualização do Anexo</h3>
-        <div class="modal-header-actions">
-          <a id="modalDownloadBtn" href="#" download="" class="btn-modal-download">
-            📥 Baixar Arquivo
-          </a>
-          <button type="button" class="btn-modal-close" onclick="closeAttachmentModal()" title="Fechar (ESC)">&times;</button>
-        </div>
+        <button type="button" class="btn-modal-close" onclick="closeAttachmentModal()" title="Fechar (ESC)">&times;</button>
       </div>
       <div class="modal-body" id="modalContainer"></div>
     </div>
@@ -1141,17 +1233,14 @@
       </div>
       <div class="appeal-body">
         <input type="hidden" id="ticketRecordId" value="" />
-
         <div class="form-group">
           <label for="ticketNumber">Número do Protocolo / Chamado</label>
           <input type="text" id="ticketNumber" placeholder="Ex: PROTO-2026-98124" />
         </div>
-
         <div class="form-group">
           <label for="ticketDate">Data de Abertura</label>
           <input type="date" id="ticketDate" />
         </div>
-
         <div class="form-group">
           <label for="ticketStatus">Situação do Chamado</label>
           <select id="ticketStatus">
@@ -1161,10 +1250,9 @@
             <option value="rejected">Indeferido / Recusado</option>
           </select>
         </div>
-
         <div class="form-group">
           <label for="ticketNotes">Observações / Parecer da Coordenação</label>
-          <textarea id="ticketNotes" rows="3" placeholder="Ex: Protocolo aberto via CAA. Coordenador confirmou análise da folha de prova até sexta-feira."></textarea>
+          <textarea id="ticketNotes" rows="3" placeholder="Ex: Protocolo aberto via CAA."></textarea>
         </div>
       </div>
       <div class="modal-footer">
@@ -1201,12 +1289,14 @@
     }
 
     const DB_NAME = "AcademicAuditDB";
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     const STORE_RECORDS = "records";
     const STORE_PROFILE = "profile";
+    const STORE_PENDING = "pending";
 
     let localDb;
     let records = [];
+    let pendingRecords = [];
     let selectedSemester = "all";
     let selectedStatusFilter = "all";
     let searchKeyword = "";
@@ -1215,7 +1305,9 @@
       name: "",
       id: "",
       course: "Farmácia",
-      institution: ""
+      institution: "",
+      hoursRequired: 200,
+      hoursSubmitted: 0
     };
 
     function initLocalDB() {
@@ -1229,6 +1321,9 @@
           if (!database.objectStoreNames.contains(STORE_PROFILE)) {
             database.createObjectStore(STORE_PROFILE, { keyPath: "key" });
           }
+          if (!database.objectStoreNames.contains(STORE_PENDING)) {
+            database.createObjectStore(STORE_PENDING, { keyPath: "id" });
+          }
         };
         request.onsuccess = function(e) {
           localDb = e.target.result;
@@ -1241,7 +1336,6 @@
     }
 
     async function dbSaveRecords() {
-      // 1. Salva localmente de forma garantida
       await new Promise((resolve, reject) => {
         const tx = localDb.transaction(STORE_RECORDS, "readwrite");
         const store = tx.objectStore(STORE_RECORDS);
@@ -1251,11 +1345,9 @@
         tx.onerror = (e) => reject(e.target.error);
       });
 
-      // 2. Sincroniza documento por documento para não estourar lotes
       if (isCloudConfigured && cloudDb) {
         syncStatusBadge.innerHTML = "☁️ Enviando atualizações...";
         const colRef = cloudDb.collection("academic_records");
-        
         for (const item of records) {
           try {
             await colRef.doc(item.id).set(item);
@@ -1264,6 +1356,28 @@
           }
         }
         syncStatusBadge.innerHTML = `☁️ Nuvem Sincronizada (${records.length} disciplinas)`;
+      }
+    }
+
+    async function dbSavePending() {
+      await new Promise((resolve, reject) => {
+        const tx = localDb.transaction(STORE_PENDING, "readwrite");
+        const store = tx.objectStore(STORE_PENDING);
+        store.clear();
+        pendingRecords.forEach(p => store.put(p));
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+      });
+
+      if (isCloudConfigured && cloudDb) {
+        const colRef = cloudDb.collection("academic_pending");
+        for (const item of pendingRecords) {
+          try {
+            await colRef.doc(item.id).set(item);
+          } catch (e) {
+            console.error("Erro ao subir pendência:", e);
+          }
+        }
       }
     }
 
@@ -1295,6 +1409,16 @@
       });
     }
 
+    function dbLoadLocalPending() {
+      return new Promise((resolve, reject) => {
+        const tx = localDb.transaction(STORE_PENDING, "readonly");
+        const store = tx.objectStore(STORE_PENDING);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = (e) => reject(e.target.error);
+      });
+    }
+
     function dbLoadLocalProfile() {
       return new Promise((resolve, reject) => {
         const tx = localDb.transaction(STORE_PROFILE, "readonly");
@@ -1305,7 +1429,6 @@
       });
     }
 
-    // Botão de Forçar Envio Completo
     window.forceSyncAllToCloud = async function() {
       if (!isCloudConfigured || !cloudDb) {
         alert("O Firebase não está conectado.");
@@ -1313,36 +1436,157 @@
       }
 
       const count = records.length;
-      if (count === 0) {
-        alert("Não há disciplinas locais para sincronizar.");
-        return;
-      }
-
-      syncStatusBadge.innerHTML = `⏳ Sincronizando ${count} matérias...`;
-      let successCount = 0;
-      let failCount = 0;
-
+      syncStatusBadge.innerHTML = `⏳ Sincronizando...`;
+      
       const colRef = cloudDb.collection("academic_records");
       for (const item of records) {
         try {
           await colRef.doc(item.id).set(item);
-          successCount++;
         } catch (err) {
           console.error("Erro na matéria " + item.subject, err);
-          failCount++;
         }
       }
 
+      await dbSavePending();
       await dbSaveProfile();
-      syncStatusBadge.innerHTML = `☁️ Nuvem Ativa (${successCount}/${count} sincronizadas)`;
+      syncStatusBadge.innerHTML = `☁️ Nuvem Ativa (${count} disciplinas)`;
+      alert(`Sucesso! Disciplinas cursadas, pendências e horas foram sincronizadas com a nuvem.`);
+    };
 
-      if (failCount > 0) {
-        alert(`Sincronização concluída: ${successCount} disciplinas enviadas. ${failCount} matérias continham anexos acima de 1MB e foram preservadas localmente.`);
+    // Controle de Abas Principais (Cursadas x A Cursar)
+    window.switchMainTab = function(tab) {
+      document.querySelectorAll(".main-nav-tabs .nav-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-content-view").forEach(v => v.classList.remove("active"));
+
+      if (tab === "history") {
+        document.getElementById("tabBtnHistory").classList.add("active");
+        document.getElementById("viewHistory").classList.add("active");
+        renderTable();
       } else {
-        alert(`Sucesso absoluto! Todas as ${successCount} disciplinas estão 100% sincronizadas na nuvem. Agora seu Edge e celular exibirão exatamente ${successCount} disciplinas.`);
+        document.getElementById("tabBtnPending").classList.add("active");
+        document.getElementById("viewPending").classList.add("active");
+        renderPendingTable();
       }
     };
 
+    // Cálculo das Horas Complementares
+    const hoursRequiredInput = document.getElementById("hoursRequired");
+    const hoursSubmittedInput = document.getElementById("hoursSubmitted");
+    const hoursBalanceText = document.getElementById("hoursBalanceText");
+    const hoursStatusBadge = document.getElementById("hoursStatusBadge");
+    const hoursProgressBar = document.getElementById("hoursProgressBar");
+
+    window.calculateHoursBalance = function() {
+      const req = parseFloat(hoursRequiredInput.value) || 0;
+      const sub = parseFloat(hoursSubmittedInput.value) || 0;
+      const balance = req - sub;
+
+      studentProfile.hoursRequired = req;
+      studentProfile.hoursSubmitted = sub;
+      dbSaveProfile();
+
+      if (balance <= 0) {
+        const excess = Math.abs(balance);
+        hoursBalanceText.textContent = excess > 0 ? `+${excess}h (Sobra)` : `0h (Concluído)`;
+        hoursBalanceText.style.color = "#059669";
+        hoursStatusBadge.textContent = "✓ Meta Cumprida";
+        hoursStatusBadge.style.color = "#059669";
+        hoursProgressBar.style.width = "100%";
+        hoursProgressBar.style.background = "#059669";
+      } else {
+        hoursBalanceText.textContent = `Faltam ${balance}h`;
+        hoursBalanceText.style.color = "var(--danger)";
+        hoursStatusBadge.textContent = "Pendente";
+        hoursStatusBadge.style.color = "var(--warning)";
+        const pct = req > 0 ? Math.min(100, Math.round((sub / req) * 100)) : 0;
+        hoursProgressBar.style.width = `${pct}%`;
+        hoursProgressBar.style.background = "var(--primary)";
+      }
+    };
+
+    // Gerenciamento de Disciplinas Pendentes (A Cursar)
+    const pendingForm = document.getElementById("pendingForm");
+    const pendingTableBody = document.getElementById("pendingTableBody");
+    const emptyPendingMessage = document.getElementById("emptyPendingMessage");
+
+    function renderPendingTable() {
+      pendingTableBody.innerHTML = "";
+      document.getElementById("countPendentes").textContent = pendingRecords.length;
+
+      if (pendingRecords.length === 0) {
+        emptyPendingMessage.style.display = "block";
+      } else {
+        emptyPendingMessage.style.display = "none";
+        pendingRecords.forEach(item => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${item.semester || "A Definir"}</strong></td>
+            <td>${item.subject}</td>
+            <td>${item.hours ? item.hours + "h" : "-"}</td>
+            <td>
+              <button class="btn-complete-pending" onclick="promotePendingToActive('${item.id}')">🎓 Concluir e Lançar Notas</button>
+              <button class="btn-action btn-delete" style="margin-left: 8px;" onclick="deletePendingRecord('${item.id}')">Excluir</button>
+            </td>
+          `;
+          pendingTableBody.appendChild(tr);
+        });
+      }
+    }
+
+    pendingForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const semester = document.getElementById("pendingSemester").value.trim();
+      const subject = document.getElementById("pendingSubject").value.trim();
+      const hours = document.getElementById("pendingHours").value.trim();
+
+      const newPending = {
+        id: "pend_" + Date.now().toString(),
+        semester: semester || "A Cursar",
+        subject,
+        hours
+      };
+
+      pendingRecords.push(newPending);
+      await dbSavePending();
+      renderPendingTable();
+      pendingForm.reset();
+    });
+
+    window.deletePendingRecord = async function(id) {
+      if (confirm("Remover esta disciplina da lista de pendências?")) {
+        pendingRecords = pendingRecords.filter(p => p.id !== id);
+        if (isCloudConfigured && cloudDb) {
+          try {
+            await cloudDb.collection("academic_pending").doc(id).delete();
+          } catch (e) {}
+        }
+        await dbSavePending();
+        renderPendingTable();
+      }
+    };
+
+    // Transfere a disciplina da aba "A Cursar" para a aba "Cursadas" abrindo o formulário
+    window.promotePendingToActive = function(id) {
+      const p = pendingRecords.find(item => item.id === id);
+      if (!p) return;
+
+      switchMainTab("history");
+      document.getElementById("semester").value = (p.semester && p.semester !== "A Cursar") ? p.semester : "";
+      document.getElementById("subject").value = p.subject;
+      document.getElementById("gradeAv1").focus();
+
+      window.scrollTo({ top: document.getElementById("gradeFormCard").offsetTop - 20, behavior: "smooth" });
+
+      // Remove da pendência ao migrar
+      pendingRecords = pendingRecords.filter(item => item.id !== id);
+      if (isCloudConfigured && cloudDb) {
+        cloudDb.collection("academic_pending").doc(id).delete().catch(() => {});
+      }
+      dbSavePending();
+      renderPendingTable();
+    };
+
+    // Interface Principal e Notas
     const studentNameInput = document.getElementById("studentName");
     const studentIdInput = document.getElementById("studentId");
     const studentCourseInput = document.getElementById("studentCourse");
@@ -1366,7 +1610,6 @@
 
     const attachmentModal = document.getElementById("attachmentModal");
     const modalFileTitle = document.getElementById("modalFileTitle");
-    const modalDownloadBtn = document.getElementById("modalDownloadBtn");
     const modalContainer = document.getElementById("modalContainer");
 
     const appealModal = document.getElementById("appealModal");
@@ -1408,7 +1651,9 @@
         name: studentNameInput.value.trim(),
         id: studentIdInput.value.trim(),
         course: studentCourseInput.value.trim(),
-        institution: institutionInput.value.trim()
+        institution: institutionInput.value.trim(),
+        hoursRequired: parseFloat(hoursRequiredInput.value) || 0,
+        hoursSubmitted: parseFloat(hoursSubmittedInput.value) || 0
       };
       dbSaveProfile();
     }
@@ -1479,14 +1724,11 @@
       let ticketLabel = "Sem Chamado";
       if (ticket && ticket.status && ticket.status !== "none") {
         if (ticket.status === "in_progress") {
-          ticketHtml = `<span class="ticket-badge ticket-in-progress" title="${ticket.notes || ''}">⏳ Protocolo #${ticket.number || 'S/N'} (Em Análise)</span>`;
+          ticketHtml = `<span class="ticket-badge ticket-in-progress">⏳ Protocolo #${ticket.number || 'S/N'} (Em Análise)</span>`;
           ticketLabel = `Em Análise (#${ticket.number || 'S/N'})`;
         } else if (ticket.status === "resolved") {
-          ticketHtml = `<span class="ticket-badge ticket-resolved" title="${ticket.notes || ''}">✓ Protocolo #${ticket.number || 'S/N'} (Deferido)</span>`;
+          ticketHtml = `<span class="ticket-badge ticket-resolved">✓ Protocolo #${ticket.number || 'S/N'} (Deferido)</span>`;
           ticketLabel = `Deferido (#${ticket.number || 'S/N'})`;
-        } else if (ticket.status === "rejected") {
-          ticketHtml = `<span class="ticket-badge ticket-rejected" title="${ticket.notes || ''}">✗ Protocolo #${ticket.number || 'S/N'} (Indeferido)</span>`;
-          ticketLabel = `Indeferido (#${ticket.number || 'S/N'})`;
         }
       }
 
@@ -1507,15 +1749,12 @@
 
     window.setStatusFilter = function(status) {
       selectedStatusFilter = status;
-
       const pillAll = document.getElementById("filterStatusAll");
       const pillDiv = document.getElementById("filterStatusDiv");
       const pillTicket = document.getElementById("filterStatusTicket");
       const pillRec = document.getElementById("filterStatusRec");
 
-      [pillAll, pillDiv, pillTicket, pillRec].forEach(p => {
-        p.classList.remove("active", "active-alert");
-      });
+      [pillAll, pillDiv, pillTicket, pillRec].forEach(p => p.classList.remove("active", "active-alert"));
 
       if (status === "all") pillAll.classList.add("active");
       else if (status === "divergence") pillDiv.classList.add("active-alert");
@@ -1532,21 +1771,16 @@
 
     function updateSemesterTabs() {
       const semesters = Array.from(new Set(records.map(r => r.semester))).sort();
-
       if (selectedSemester !== "all" && !semesters.includes(selectedSemester)) {
         selectedSemester = "all";
       }
 
       semesterTabsContainer.innerHTML = "";
-
       const allBtn = document.createElement("button");
       allBtn.type = "button";
       allBtn.className = `tab-btn ${selectedSemester === "all" ? "active" : ""}`;
       allBtn.textContent = `Todos (${records.length})`;
-      allBtn.onclick = () => {
-        selectedSemester = "all";
-        renderTable();
-      };
+      allBtn.onclick = () => { selectedSemester = "all"; renderTable(); };
       semesterTabsContainer.appendChild(allBtn);
 
       semesters.forEach(sem => {
@@ -1555,10 +1789,7 @@
         btn.type = "button";
         btn.className = `tab-btn ${selectedSemester === sem ? "active" : ""}`;
         btn.textContent = `${sem} (${count})`;
-        btn.onclick = () => {
-          selectedSemester = sem;
-          renderTable();
-        };
+        btn.onclick = () => { selectedSemester = sem; renderTable(); };
         semesterTabsContainer.appendChild(btn);
       });
     }
@@ -1566,6 +1797,7 @@
     function updateDashboard(currentRecords) {
       const total = currentRecords.length;
       statTotal.textContent = total;
+      document.getElementById("countCursadas").textContent = records.length;
 
       if (total === 0) {
         statGpa.textContent = "0.00";
@@ -1573,19 +1805,15 @@
       } else {
         let sumFinalAvg = 0;
         let passCount = 0;
-
         currentRecords.forEach(item => {
           const evalData = processAcademicStatus(item.av1, item.av2, item.av3, item.portalGrade, item.ticket);
           sumFinalAvg += evalData.finalAvg;
-          if (evalData.status.includes("Aprovado")) {
-            passCount++;
-          }
+          if (evalData.status.includes("Aprovado")) passCount++;
         });
 
         statGpa.textContent = (sumFinalAvg / total).toFixed(2);
         statPassRate.textContent = `${Math.round((passCount / total) * 100)}%`;
       }
-
       renderChart(currentRecords);
     }
 
@@ -1607,9 +1835,7 @@
         ? (isDark ? "#93c5fd" : "#1d4ed8") 
         : (isDark ? "#fca5a5" : "#b91c1c"));
 
-      if (performanceChart) {
-        performanceChart.destroy();
-      }
+      if (performanceChart) performanceChart.destroy();
 
       performanceChart = new Chart(ctx, {
         type: "bar",
@@ -1631,56 +1857,28 @@
             y: {
               beginAtZero: true,
               max: 10,
-              ticks: { 
-                stepSize: 1,
-                color: isDark ? "#94a3b8" : "#64748b"
-              },
-              grid: {
-                color: isDark ? "#334155" : "#e2e8f0"
-              }
+              ticks: { stepSize: 1, color: isDark ? "#94a3b8" : "#64748b" },
+              grid: { color: isDark ? "#334155" : "#e2e8f0" }
             },
             x: {
-              ticks: {
-                maxRotation: 45,
-                minRotation: 0,
-                autoSkip: false,
-                color: isDark ? "#94a3b8" : "#64748b"
-              },
+              ticks: { maxRotation: 45, minRotation: 0, autoSkip: false, color: isDark ? "#94a3b8" : "#64748b" },
               grid: { display: false }
             }
           },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => `Média: ${context.raw}`
-              }
-            }
-          }
+          plugins: { legend: { display: false } }
         }
       });
     }
 
     function getFilteredRecords() {
       return records.filter(item => {
-        if (selectedSemester !== "all" && item.semester !== selectedSemester) {
-          return false;
-        }
-
-        if (searchKeyword && !item.subject.toLowerCase().includes(searchKeyword)) {
-          return false;
-        }
+        if (selectedSemester !== "all" && item.semester !== selectedSemester) return false;
+        if (searchKeyword && !item.subject.toLowerCase().includes(searchKeyword)) return false;
 
         const evalData = processAcademicStatus(item.av1, item.av2, item.av3, item.portalGrade, item.ticket);
-        if (selectedStatusFilter === "divergence" && !evalData.hasDivergence) {
-          return false;
-        }
-        if (selectedStatusFilter === "tickets" && (!item.ticket || item.ticket.status === "none")) {
-          return false;
-        }
-        if (selectedStatusFilter === "recovery" && evalData.status !== "Em Recuperação") {
-          return false;
-        }
+        if (selectedStatusFilter === "divergence" && !evalData.hasDivergence) return false;
+        if (selectedStatusFilter === "tickets" && (!item.ticket || item.ticket.status === "none")) return false;
+        if (selectedStatusFilter === "recovery" && evalData.status !== "Em Recuperação") return false;
 
         return true;
       });
@@ -1696,7 +1894,6 @@
         emptyMessage.style.display = "none";
         filtered.forEach((item) => {
           const evalData = processAcademicStatus(item.av1, item.av2, item.av3, item.portalGrade, item.ticket);
-
           const tr = document.createElement("tr");
 
           const av1Class = getScoreClass(item.av1, 7.0);
@@ -1712,29 +1909,20 @@
             av3Display = `<span class="score-neutral">Pendente</span><span class="needed-tip">Precisa: ${formatScore(evalData.neededInFinal)}</span>`;
           }
 
-          const finalAvgClass = evalData.finalAvg >= (evalData.partialAvg >= 7.0 ? 7.0 : 5.0) 
-            ? "score-high" 
-            : "score-low";
-
-          const portalDisplay = item.portalGrade !== null && !isNaN(item.portalGrade) 
-            ? formatScore(item.portalGrade) 
-            : "-";
-
+          const finalAvgClass = evalData.finalAvg >= (evalData.partialAvg >= 7.0 ? 7.0 : 5.0) ? "score-high" : "score-low";
+          const portalDisplay = item.portalGrade !== null && !isNaN(item.portalGrade) ? formatScore(item.portalGrade) : "-";
           const statusBadge = `<span class="badge ${evalData.statusClass}">${evalData.status}</span>`;
 
           let attachmentsHtml = '<span style="color:#94a3b8;">Nenhum</span>';
           if (item.attachments && item.attachments.length > 0) {
             attachmentsHtml = `<div class="attachments-list">` + item.attachments.map((att, idx) => {
-              const isPdf = att.type && att.type.includes("pdf");
-              const icon = isPdf ? "📄" : "🖼️";
-              return `<button type="button" class="btn-view-attachment" onclick="openAttachmentModal('${item.id}', ${idx})" title="Visualizar ${att.name}">
-                ${icon} Ver Anexo ${idx + 1}
-              </button>`;
+              const icon = att.type && att.type.includes("pdf") ? "📄" : "🖼️";
+              return `<button type="button" class="btn-view-attachment" onclick="openAttachmentModal('${item.id}', ${idx})">${icon} Ver Anexo ${idx + 1}</button>`;
             }).join("") + `</div>`;
           }
 
           const appealButtonHtml = evalData.hasDivergence
-            ? `<button class="btn-action btn-appeal" onclick="generateAppealLetter('${item.id}')" title="Gerar requerimento formal de contestação">📋 Recurso</button>`
+            ? `<button class="btn-action btn-appeal" onclick="generateAppealLetter('${item.id}')">📋 Recurso</button>`
             : "";
 
           tr.innerHTML = `
@@ -1754,7 +1942,7 @@
             <td>${attachmentsHtml}</td>
             <td>
               ${appealButtonHtml}
-              <button class="btn-action btn-ticket" onclick="openTicketModal('${item.id}')" title="Gerenciar chamado e protocolo">📞 Chamado</button>
+              <button class="btn-action btn-ticket" onclick="openTicketModal('${item.id}')">📞 Chamado</button>
               <button class="btn-action btn-edit" onclick="startEditRecord('${item.id}')">Editar</button>
               <button class="btn-action btn-final" onclick="promptFinalGrade('${item.id}')">Final</button>
               <button class="btn-action btn-delete" onclick="deleteRecord('${item.id}')">Excluir</button>
@@ -1769,25 +1957,22 @@
       updateDashboard(filtered);
     }
 
+    // Protocolos
     window.openTicketModal = function(recordId) {
       const item = records.find(r => r.id === recordId);
       if (!item) return;
 
       ticketRecordId.value = item.id;
       ticketModalTitle.textContent = `📌 Protocolo: ${item.subject}`;
-
       const t = item.ticket || {};
       ticketNumber.value = t.number || "";
       ticketDate.value = t.date || new Date().toISOString().split("T")[0];
       ticketStatus.value = t.status || (item.portalGrade && item.portalGrade !== item.average ? "in_progress" : "none");
       ticketNotes.value = t.notes || "";
-
       ticketModal.classList.add("active");
     };
 
-    window.closeTicketModal = function() {
-      ticketModal.classList.remove("active");
-    };
+    window.closeTicketModal = function() { ticketModal.classList.remove("active"); };
 
     window.saveTicketData = async function() {
       const id = ticketRecordId.value;
@@ -1806,6 +1991,7 @@
       renderTable();
     };
 
+    // Recurso
     window.generateAppealLetter = function(recordId) {
       const item = records.find(r => r.id === recordId);
       if (!item) return;
@@ -1817,7 +2003,7 @@
       const institution = studentProfile.institution || "[Instituição de Ensino]";
       const currentDate = new Date().toLocaleDateString("pt-BR");
 
-      let calcDetails = `AV1: ${formatScore(item.av1)} | AV2: ${formatScore(item.av2)} => Média Parcial Calculada: ${formatScore(evalData.partialAvg)}`;
+      let calcDetails = `AV1: ${formatScore(item.av1)} | AV2: ${formatScore(item.av2)} => Média Parcial: ${formatScore(evalData.partialAvg)}`;
       if (item.av3 !== null && !isNaN(item.av3)) {
         calcDetails += `\nProva Final (AV3): ${formatScore(item.av3)} => Média Definitiva Auditada: ${formatScore(evalData.finalAvg)}`;
       }
@@ -1826,21 +2012,17 @@
         ? `um acréscimo indevido de +${(item.portalGrade - evalData.finalAvg).toFixed(2)} pontos`
         : `uma redução prejudicial de ${(evalData.finalAvg - item.portalGrade).toFixed(2)} ponto(s) a menor`;
 
-      const protocolLine = item.ticket && item.ticket.number 
-        ? `\nProtocolo Anteriormente Aberto: #${item.ticket.number}` 
-        : "";
-
       const letter = `REQUERIMENTO DE AUDITORIA E RETIFICAÇÃO DE NOTA
 
 À Coordenação do Curso de ${studentCourse}
 ${institution}
 
-Assunto: Retificação de Média Acadêmica / Correção de Lançamento no Portal${protocolLine}
+Assunto: Retificação de Média Acadêmica / Correção de Lançamento no Portal
 Data da Solicitação: ${currentDate}
 
 Prezados(as),
 
-Eu, ${studentName}, regularmente matriculado(a) sob o número ${studentId} no curso de ${studentCourse}, venho por meio deste solicitar formalmente a retificação da nota/média lançada no portal acadêmico referente à seguinte disciplina:
+Eu, ${studentName}, regularmente matriculado(a) sob o número ${studentId} no curso de ${studentCourse}, venho requerer a retificação da nota lançada no portal referente à disciplina:
 
 • Disciplina: ${item.subject}
 • Período Letivo: ${item.semester}
@@ -1852,50 +2034,38 @@ DEMONSTRATIVO DE AVALIAÇÃO AUDITADA:
 • Situação Verificada: ${evalData.status}
 
 FUNDAMENTAÇÃO:
-Ao auditar o sistema acadêmico, constatou-se que o valor divulgado no portal (${formatScore(item.portalGrade)}) diverge da média matemática real (${formatScore(evalData.finalAvg)}), registrando ${diffText}.
+Constatou-se que o valor divulgado no portal (${formatScore(item.portalGrade)}) diverge da média matemática real (${formatScore(evalData.finalAvg)}), registrando ${diffText}.
 
-Declaro que possuo os comprovantes e folhas de avaliação que atestam as notas acima informadas, colocando-os à disposição para conferência imediata.
-
-Diante do exposto, solicito a gentileza da atualização e retificação cadastral da média da referida disciplina para ${formatScore(evalData.finalAvg)}.
+Solicito a gentileza da atualização cadastral da média para ${formatScore(evalData.finalAvg)}.
 
 Atenciosamente,
 
 ____________________________________________
 ${studentName}
-Matrícula: ${studentId}
-Curso de ${studentCourse}`;
+Matrícula: ${studentId}`;
 
       appealTextContent.value = letter;
       btnCopyAppeal.textContent = "📋 Copiar Texto Completo";
       appealModal.classList.add("active");
     };
 
-    window.closeAppealModal = function() {
-      appealModal.classList.remove("active");
-    };
+    window.closeAppealModal = function() { appealModal.classList.remove("active"); };
 
     window.copyAppealText = function() {
       appealTextContent.select();
       navigator.clipboard.writeText(appealTextContent.value).then(() => {
         btnCopyAppeal.textContent = "✓ Copiado com Sucesso!";
-        setTimeout(() => {
-          btnCopyAppeal.textContent = "📋 Copiar Texto Completo";
-        }, 2500);
-      }).catch(() => {
-        document.execCommand("copy");
-        btnCopyAppeal.textContent = "✓ Copiado!";
+        setTimeout(() => { btnCopyAppeal.textContent = "📋 Copiar Texto Completo"; }, 2500);
       });
     };
 
+    // Modal Anexo
     window.openAttachmentModal = function(recordId, attachmentIndex) {
       const item = records.find(r => r.id === recordId);
       if (!item || !item.attachments || !item.attachments[attachmentIndex]) return;
 
       const file = item.attachments[attachmentIndex];
-      modalFileTitle.textContent = `${file.type.includes("pdf") ? "📄" : "🖼️"} ${file.name} - (${item.subject})`;
-      modalDownloadBtn.href = file.data;
-      modalDownloadBtn.download = file.name;
-
+      modalFileTitle.textContent = `${file.name} - (${item.subject})`;
       modalContainer.innerHTML = "";
 
       if (file.type && file.type.includes("pdf")) {
@@ -1905,33 +2075,20 @@ Curso de ${studentCourse}`;
       } else {
         const img = document.createElement("img");
         img.src = file.data;
-        img.alt = file.name;
         modalContainer.appendChild(img);
       }
-
       attachmentModal.classList.add("active");
     };
 
-    window.closeAttachmentModal = function() {
-      attachmentModal.classList.remove("active");
-      modalContainer.innerHTML = "";
-    };
+    window.closeAttachmentModal = function() { attachmentModal.classList.remove("active"); modalContainer.innerHTML = ""; };
 
     window.handleModalOverlayClick = function(event, modalId) {
-      const modal = document.getElementById(modalId);
-      if (event.target === modal) {
-        modal.classList.remove("active");
+      if (event.target.id === modalId) {
+        document.getElementById(modalId).classList.remove("active");
       }
     };
 
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") {
-        closeAttachmentModal();
-        closeAppealModal();
-        closeTicketModal();
-      }
-    });
-
+    // Edição de Registro
     window.startEditRecord = function(id) {
       const item = records.find(r => r.id === id);
       if (!item) return;
@@ -1947,7 +2104,6 @@ Curso de ${studentCourse}`;
       formTitle.textContent = `✏️ Editando: ${item.subject}`;
       btnSubmitForm.textContent = "Atualizar Disciplina";
       btnCancelEdit.style.display = "inline-block";
-
       window.scrollTo({ top: document.getElementById("gradeFormCard").offsetTop - 20, behavior: "smooth" });
     };
 
@@ -1964,19 +2120,13 @@ Curso de ${studentCourse}`;
       if (!item) return;
 
       const currentVal = item.av3 !== null && !isNaN(item.av3) ? item.av3 : "";
-      const input = prompt(`Informe a nota da Prova Final / AV3 para "${item.subject}" (0 a 10):`, currentVal);
-
+      const input = prompt(`Nota da Prova Final / AV3 para "${item.subject}" (0 a 10):`, currentVal);
       if (input !== null) {
-        if (input.trim() === "") {
-          item.av3 = null;
-        } else {
+        if (input.trim() === "") item.av3 = null;
+        else {
           const val = parseFloat(input.replace(",", "."));
-          if (!isNaN(val) && val >= 0 && val <= 10) {
-            item.av3 = val;
-          } else {
-            alert("Por favor, digite uma nota válida entre 0 e 10.");
-            return;
-          }
+          if (!isNaN(val) && val >= 0 && val <= 10) item.av3 = val;
+          else { alert("Digite uma nota válida entre 0 e 10."); return; }
         }
         await dbSaveRecords();
         renderTable();
@@ -1984,17 +2134,11 @@ Curso de ${studentCourse}`;
     };
 
     window.deleteRecord = async function(id) {
-      if (confirm("Deseja realmente remover esta disciplina?")) {
+      if (confirm("Remover esta disciplina do histórico?")) {
         records = records.filter(r => r.id !== id);
-        
         if (isCloudConfigured && cloudDb) {
-          try {
-            await cloudDb.collection("academic_records").doc(id).delete();
-          } catch (e) {
-            console.error("Erro ao excluir da nuvem:", e);
-          }
+          try { await cloudDb.collection("academic_records").doc(id).delete(); } catch (e) {}
         }
-
         await dbSaveRecords();
         renderTable();
       }
@@ -2015,23 +2159,19 @@ Curso de ${studentCourse}`;
           img.onload = function() {
             let width = img.width;
             let height = img.height;
-
             if (width > maxWidth) {
               height = Math.round((height * maxWidth) / width);
               width = maxWidth;
             }
-
             const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
-
-            const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
             resolve({
               name: file.name.replace(/\.[^/.]+$/, ".jpg"),
               type: "image/jpeg",
-              data: compressedDataUrl
+              data: canvas.toDataURL("image/jpeg", quality)
             });
           };
           img.src = event.target.result;
@@ -2042,16 +2182,13 @@ Curso de ${studentCourse}`;
 
     form.addEventListener("submit", async function(e) {
       e.preventDefault();
-
       const isEditing = editRecordId.value !== "";
       const semester = document.getElementById("semester").value.trim();
       const subject = document.getElementById("subject").value.trim();
       const av1 = parseFloat(document.getElementById("gradeAv1").value);
       const av2 = parseFloat(document.getElementById("gradeAv2").value);
-      
       const av3Raw = document.getElementById("gradeAv3").value.trim();
       const av3 = av3Raw !== "" ? parseFloat(av3Raw) : null;
-
       const portalRaw = document.getElementById("portalGrade").value.trim();
       const portalGrade = portalRaw !== "" ? parseFloat(portalRaw) : null;
       
@@ -2111,33 +2248,23 @@ Curso de ${studentCourse}`;
     });
 
     window.exportBackupJson = function() {
-      if (records.length === 0 && !studentProfile.name) {
-        alert("Não há dados para exportar no momento.");
-        return;
-      }
-
       const fullBackup = {
         app: "AuditoriaAcademica",
-        version: "6.5",
+        version: "7.0",
         exportDate: new Date().toISOString(),
         profile: studentProfile,
-        records: records
+        records: records,
+        pendingRecords: pendingRecords
       };
 
       const blob = new Blob([JSON.stringify(fullBackup)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
       const downloadAnchor = document.createElement("a");
-      downloadAnchor.href = url;
-      downloadAnchor.download = `Backup_Auditoria_Notas_${new Date().toISOString().split("T")[0]}.json`;
-      document.body.appendChild(downloadAnchor);
+      downloadAnchor.href = URL.createObjectURL(blob);
+      downloadAnchor.download = `Backup_Academico_${new Date().toISOString().split("T")[0]}.json`;
       downloadAnchor.click();
-      downloadAnchor.remove();
-      URL.revokeObjectURL(url);
     };
 
-    window.triggerRestoreBackup = function() {
-      document.getElementById("backupFileInput").click();
-    };
+    window.triggerRestoreBackup = function() { document.getElementById("backupFileInput").click(); };
 
     window.importBackupJson = function(event) {
       const file = event.target.files[0];
@@ -2148,9 +2275,13 @@ Curso de ${studentCourse}`;
         try {
           const parsed = JSON.parse(e.target.result);
           if (parsed.records && Array.isArray(parsed.records)) {
-            if (confirm(`Encontradas ${parsed.records.length} disciplinas no backup. Deseja restaurar e sincronizar com a nuvem?`)) {
+            if (confirm(`Restaurar backup com ${parsed.records.length} disciplinas?`)) {
               records = parsed.records;
+              if (parsed.pendingRecords && Array.isArray(parsed.pendingRecords)) {
+                pendingRecords = parsed.pendingRecords;
+              }
               await dbSaveRecords();
+              await dbSavePending();
 
               if (parsed.profile) {
                 studentProfile = parsed.profile;
@@ -2159,20 +2290,17 @@ Curso de ${studentCourse}`;
                 studentIdInput.value = studentProfile.id || "";
                 studentCourseInput.value = studentProfile.course || "Farmácia";
                 institutionInput.value = studentProfile.institution || "";
+                hoursRequiredInput.value = studentProfile.hoursRequired || 200;
+                hoursSubmittedInput.value = studentProfile.hoursSubmitted || 0;
+                calculateHoursBalance();
               }
 
-              selectedSemester = "all";
-              selectedStatusFilter = "all";
-              setStatusFilter("all");
               renderTable();
-              alert(`Sucesso! Todas as ${records.length} disciplinas foram carregadas e enviadas para a nuvem.`);
+              renderPendingTable();
+              alert("Backup restaurado e sincronizado!");
             }
-          } else {
-            alert("O arquivo fornecido não é um backup acadêmico válido.");
           }
-        } catch (err) {
-          alert("Erro ao ler o arquivo JSON: " + err.message);
-        }
+        } catch (err) { alert("Erro ao ler backup: " + err.message); }
       };
       reader.readAsText(file);
       event.target.value = "";
@@ -2180,46 +2308,22 @@ Curso de ${studentCourse}`;
 
     btnExport.addEventListener("click", function() {
       const dataToExport = getFilteredRecords();
-
-      if (dataToExport.length === 0) {
-        alert("Não há disciplinas para exportar no filtro atual.");
-        return;
-      }
+      if (dataToExport.length === 0) { alert("Não há disciplinas para exportar."); return; }
 
       const cleanStr = (s) => (s || "").replace(/"/g, '""');
-
       const profileLines = [
-        `"RELATÓRIO OFICIAL DE AUDITORIA E CONTESTAÇÃO DE NOTAS"`,
-        `"Instituição:";"${cleanStr(studentProfile.institution)}"`,
-        `"Curso:";"${cleanStr(studentProfile.course)}"`,
+        `"RELATÓRIO ACADÊMICO DE AUDITORIA"`,
         `"Aluno:";"${cleanStr(studentProfile.name)}"`,
+        `"Curso:";"${cleanStr(studentProfile.course)}"`,
         `"Matrícula:";"${cleanStr(studentProfile.id)}"`,
-        `"Filtro Período:";"${selectedSemester === 'all' ? 'Todos os Períodos' : selectedSemester}"`,
-        `"Filtro Status:";"${selectedStatusFilter}"`,
-        `"Data da Extração:";"${new Date().toLocaleDateString('pt-BR')}"`,
+        `"Horas Complementares:";"Exigidas: ${studentProfile.hoursRequired}h | Concluídas: ${studentProfile.hoursSubmitted}h"`,
         ""
       ];
 
-      const headers = [
-        "Periodo", 
-        "Disciplina", 
-        "AV1", 
-        "AV2", 
-        "Media_Real_Calculada", 
-        "Prova_Final_AV3", 
-        "Media_Definitiva", 
-        "Media_Lancada_Portal", 
-        "Status_Auditoria", 
-        "Status_Chamado",
-        "Numero_Protocolo",
-        "Situacao_Final", 
-        "Qtd_Comprovantes"
-      ];
-
+      const headers = ["Periodo", "Disciplina", "AV1", "AV2", "Media_Real", "AV3_Final", "Media_Definitiva", "No_Portal", "Situacao"];
       const rows = dataToExport.map(item => {
         const evalData = processAcademicStatus(item.av1, item.av2, item.av3, item.portalGrade, item.ticket);
         const formatForCsv = (num) => num !== null && !isNaN(num) ? num.toFixed(2).replace(".", ",") : "";
-
         return [
           `"${cleanStr(item.semester)}"`,
           `"${cleanStr(item.subject)}"`,
@@ -2229,75 +2333,64 @@ Curso de ${studentCourse}`;
           formatForCsv(item.av3),
           formatForCsv(evalData.finalAvg),
           formatForCsv(item.portalGrade),
-          `"${cleanStr(evalData.auditText)}"`,
-          `"${cleanStr(evalData.ticketLabel)}"`,
-          `"${cleanStr(item.ticket ? item.ticket.number : '')}"`,
-          `"${cleanStr(evalData.status)}"`,
-          item.attachments ? item.attachments.length : 0
+          `"${cleanStr(evalData.status)}"`
         ].join(";");
       });
 
       const csvContent = "\uFEFF" + [...profileLines, headers.join(";"), ...rows].join("\r\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.setAttribute("href", url);
-      
-      const sanitizedName = (studentProfile.name || "Aluno").replace(/\s+/g, "_");
-      const fileName = `Auditoria_Notas_${sanitizedName}_${selectedSemester}.csv`;
-
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
+      link.href = URL.createObjectURL(blob);
+      link.download = `Boletim_${(studentProfile.name || "Aluno").replace(/\s+/g, "_")}.csv`;
       link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     });
 
     async function startApp() {
       await initLocalDB();
-
-      const savedTheme = localStorage.getItem("academic_theme_pref") || "light";
-      applyTheme(savedTheme);
+      applyTheme(localStorage.getItem("academic_theme_pref") || "light");
 
       records = await dbLoadLocalRecords();
+      pendingRecords = await dbLoadLocalPending();
       const localProfile = await dbLoadLocalProfile();
       if (localProfile) studentProfile = localProfile;
 
       if (isCloudConfigured && cloudDb) {
         try {
           const profileDoc = await cloudDb.collection("academic_profile").doc("student").get();
-          if (profileDoc.exists) {
-            studentProfile = profileDoc.data();
-          }
+          if (profileDoc.exists) studentProfile = profileDoc.data();
 
           cloudDb.collection("academic_records").onSnapshot((snapshot) => {
             if (!snapshot.empty) {
               const cloudRecords = [];
               snapshot.forEach(doc => cloudRecords.push(doc.data()));
-
-              // Se a nuvem tiver mais registros ou registros atualizados, atualiza o local
               if (cloudRecords.length >= records.length) {
                 records = cloudRecords;
-                const tx = localDb.transaction(STORE_RECORDS, "readwrite");
-                const store = tx.objectStore(STORE_RECORDS);
-                store.clear();
-                records.forEach(r => store.put(r));
+                renderTable();
               }
-
-              renderTable();
             }
           });
-        } catch (e) {
-          console.warn("Falha ao sincronizar com nuvem inicial:", e);
-        }
+
+          cloudDb.collection("academic_pending").onSnapshot((snapshot) => {
+            if (!snapshot.empty) {
+              const cloudPending = [];
+              snapshot.forEach(doc => cloudPending.push(doc.data()));
+              pendingRecords = cloudPending;
+              renderPendingTable();
+            }
+          });
+        } catch (e) {}
       }
 
       studentNameInput.value = studentProfile.name || "";
-      studentIdInput.value = studentProfile.id || "";
+      studentIdInput.value = studentProfile.id || "01586864";
       studentCourseInput.value = studentProfile.course || "Farmácia";
-      institutionInput.value = studentProfile.institution || "";
+      institutionInput.value = studentProfile.institution || "Ser Educacional - Uninassau";
+      hoursRequiredInput.value = studentProfile.hoursRequired || 200;
+      hoursSubmittedInput.value = studentProfile.hoursSubmitted || 0;
 
+      calculateHoursBalance();
       renderTable();
+      renderPendingTable();
     }
 
     startApp();
